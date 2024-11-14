@@ -3,42 +3,43 @@ package com.example.pokedex.screen.pokePage
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pokedex.R
-import com.example.pokedex.connection.PokedexDatabase
 import com.example.pokedex.entity.Pokemon
-import com.example.pokedex.repository.PokemonRepository
+import com.example.pokedex.local.repository.LocalPokemonRepository
+import com.example.pokedex.remote.repository.RemotePokemonRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class PokePageViewModel(application: Application): AndroidViewModel(application) {
-     val readAlldata: Flow<List<Pokemon>>
-    private var repository: PokemonRepository
+class PokePageViewModel(
+    private val localRepository: LocalPokemonRepository,
+    private val remoteRepository: RemotePokemonRepository,
+    application: Application
+) : AndroidViewModel(application) {
 
-    init {
-        val pokemonDao = PokedexDatabase.getDatabase(application).pokemonDao()
-        repository = PokemonRepository(pokemonDao)
-        readAlldata = repository.getAllPokemon()
-//        addPokemon(Pokemon(name = "Pikachu", type = "Elétrico", img = R.drawable.pikachu))
-//        addPokemon(Pokemon(name = "Charizard", type = "Fogo", img = R.drawable.charizard))
-//        addPokemon(Pokemon(name = "Ivysaur", type = "Planta", img = R.drawable.ivysaur))
-//        addPokemon(Pokemon(name = "Piplup", type = "Água", img = R.drawable.piplup))
-//        addPokemon(Pokemon(name = "Gengar", type = "Fantasma", img = R.drawable.gengar))
-//        addPokemon(Pokemon(name = "Tepig", type = "Fogo", img = R.drawable.tepig))
-//        addPokemon(Pokemon(name = "Abra", type = "Psíquico", img = R.drawable.abra))
-//        addPokemon(Pokemon(name = "Chikorita", type = "Planta", img = R.drawable.chikorita))
-//        addPokemon(Pokemon(name = "Clefairy", type = "Normal", img = R.drawable.clefairy))
+    private val _uiState = MutableStateFlow<List<Pokemon>>(emptyList())
+    val uiState = _uiState.asStateFlow()
+
+    init{
+        getAllPokemon()
+//        addPokemon(Pokemon(name = "Abra", type = "Psych", img = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/35.png"))
+        viewModelScope.launch(Dispatchers.IO){
+            val response = remoteRepository.getPokemonFromApi(4)
+        println(response)
+        }
     }
 
-        fun addPokemon(pokemon: Pokemon){
-            viewModelScope.launch(Dispatchers.IO) {
-                repository.addPokemon(pokemon)
+    fun addPokemon(pokemon: Pokemon) {
+        viewModelScope.launch(Dispatchers.IO) {
+            localRepository.addPokemon(pokemon)
+        }
+    }
+
+    fun getAllPokemon() {
+        viewModelScope.launch(Dispatchers.IO) {
+            localRepository.getAllPokemon().collect { pokemonList ->
+                _uiState.value = pokemonList
             }
         }
-
-//        fun getAllPokemon(){
-//            viewModelScope.launch(Dispatchers.IO) {
-//                repository.addPokemon(pokemon)
-//            }
-//        }
+    }
 }
