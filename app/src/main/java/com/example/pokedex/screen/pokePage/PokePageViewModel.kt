@@ -1,44 +1,83 @@
 package com.example.pokedex.screen.pokePage
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.pokedex.entity.Pokemon
 import com.example.pokedex.local.repository.LocalPokemonRepository
+import com.example.pokedex.remote.dto.PokemonResponse
 import com.example.pokedex.remote.repository.RemotePokemonRepository
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class PokePageViewModel(
     private val localRepository: LocalPokemonRepository,
     private val remoteRepository: RemotePokemonRepository,
     application: Application
 ) : AndroidViewModel(application) {
 
-    private val _uiState = MutableStateFlow<List<Pokemon>>(emptyList())
-    val uiState = _uiState.asStateFlow()
+    private val _sortType = MutableStateFlow(SortType.ID)
 
-    init{
-        getAllPokemon()
-//        addPokemon(Pokemon(name = "Abra", type = "Psych", img = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/35.png"))
-        viewModelScope.launch(Dispatchers.IO){
-            val response = remoteRepository.getPokemonFromApi(4)
-        println(response)
-        }
-    }
+    private val _uiState = _sortType
+        .flatMapLatest { sortType ->
+            when(sortType){
+                SortType.FIRST_TYPE -> localRepository.getAllPokemonOrderByFirstType()
+                SortType.SECOND_TYPE -> localRepository.getAllPokemonOrderBySecondType()
+                SortType.ID -> localRepository.getAllPokemonOrderById()
+                SortType.NAME -> localRepository.getAllPokemonOrderByName()
+            }
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    fun addPokemon(pokemon: Pokemon) {
-        viewModelScope.launch(Dispatchers.IO) {
-            localRepository.addPokemon(pokemon)
-        }
-    }
+    private val _state = MutableStateFlow(PokePageState())
 
-    fun getAllPokemon() {
-        viewModelScope.launch(Dispatchers.IO) {
-            localRepository.getAllPokemon().collect { pokemonList ->
-                _uiState.value = pokemonList
+    val uiState = combine(_state, _sortType, _uiState){ state, sortType, uiState ->
+        state.copy(
+            uiState = uiState,
+            sortType = sortType
+        )
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PokePageState())
+
+    fun onEvent(event: PokePageEvent){
+        when(event){
+            PokePageEvent.HideDialog -> {
+                _state.update { it.copy(
+                    isAddingPokemon = false
+                ) }
+            }
+
+            PokePageEvent.SavePokemon -> {
+                val id = uiState.value.pokeId
+                var newPokemon: PokemonResponse? = null
+                viewModelScope.launch(Dispatchers.IO) {
+                    newPokemon = remoteRepository.getPokemonFromApi(id)
+                }
+                Log.d("NewPokemon", newPokemon.toString())
+            }
+
+            is PokePageEvent.SetPokeId -> {
+                _state.update {
+                    it.copy(
+                        pokeId = event.id
+                    )
+                }
+            }
+
+            PokePageEvent.ShowDialog -> {
+                _state.update { it.copy(
+                    isAddingPokemon = true
+                ) }
+            }
+
+            is PokePageEvent.SortPokemon -> {
+                _sortType.value = event.sortType
             }
         }
     }

@@ -1,13 +1,6 @@
 package com.example.pokedex.di
 
-import android.content.Context
 import androidx.room.Room
-import coil3.ImageLoader
-import coil3.disk.DiskCache
-import coil3.disk.directory
-import coil3.memory.MemoryCache
-import coil3.request.CachePolicy
-import coil3.util.DebugLogger
 import com.example.pokedex.connection.PokedexDatabase
 import com.example.pokedex.local.repository.LocalPokemonRepository
 import com.example.pokedex.remote.api.ApiService

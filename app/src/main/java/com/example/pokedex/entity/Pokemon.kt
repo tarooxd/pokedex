@@ -1,6 +1,5 @@
 package com.example.pokedex.entity
 
-import android.graphics.Bitmap
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 

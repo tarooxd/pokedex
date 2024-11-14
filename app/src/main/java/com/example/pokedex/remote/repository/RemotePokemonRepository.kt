@@ -9,10 +9,15 @@ class RemotePokemonRepository(
     private val apiService: ApiService,
     private val localPokemonRepository: LocalPokemonRepository
 ) {
-    suspend fun getPokemonFromApi(id: Int): PokemonResponse {
+    suspend fun getPokemonFromApi(id: String): PokemonResponse {
         val pokemon = apiService.getPokemonById(id)
         localPokemonRepository.addPokemon(
-            Pokemon(pokemon.id, pokemon.name, pokemon.types.get(0).type.name, pokemon.sprites.other.officialArtwork.frontDefault)
+            Pokemon(
+                pokemon.id,
+                pokemon.name.replaceFirstChar { it.uppercase() },
+                pokemon.types.get(0).type.name,
+                pokemon.sprites.other.officialArtwork.frontDefault
+            )
         )
 
         return pokemon

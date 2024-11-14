@@ -1,7 +1,6 @@
 package com.example.pokedex
 
 import android.app.Application
-import android.content.Context
 import coil3.ImageLoader
 import coil3.PlatformContext
 import coil3.SingletonImageLoader
@@ -13,7 +12,6 @@ import coil3.util.DebugLogger
 import com.example.pokedex.di.appModule
 import com.example.pokedex.di.databaseModule
 import com.example.pokedex.di.networkModule
-import org.koin.android.ext.android.inject
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
 import org.koin.core.context.startKoin

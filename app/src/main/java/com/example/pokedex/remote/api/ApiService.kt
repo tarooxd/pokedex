@@ -8,6 +8,6 @@ interface ApiService {
 
     @GET("pokemon/{id}")
     suspend fun getPokemonById(
-        @Path("id") id: Int
+        @Path("id") id: String
     ): PokemonResponse
 }
