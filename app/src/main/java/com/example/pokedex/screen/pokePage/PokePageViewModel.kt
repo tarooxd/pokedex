@@ -55,11 +55,9 @@ class PokePageViewModel(
 
             PokePageEvent.SavePokemon -> {
                 val id = uiState.value.pokeId
-                var newPokemon: PokemonResponse? = null
                 viewModelScope.launch(Dispatchers.IO) {
-                    newPokemon = remoteRepository.getPokemonFromApi(id)
+                    remoteRepository.getPokemonFromApi(id)
                 }
-                Log.d("NewPokemon", newPokemon.toString())
             }
 
             is PokePageEvent.SetPokeId -> {

@@ -21,8 +21,7 @@ class LocalPokemonRepository(
     }
 
     fun getAllPokemonOrderBySecondType(): Flow<List<Pokemon>> {
-//        return pokemonDao.readAllPokemonOrderBySecondType()
-        TODO()
+        return pokemonDao.readAllPokemonOrderBySecondType()
     }
 
 

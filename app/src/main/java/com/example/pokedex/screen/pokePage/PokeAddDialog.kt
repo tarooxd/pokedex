@@ -54,24 +54,3 @@ fun PokeAddDialog(
         }
     )
 }
-
-@Preview
-@Composable
-fun PreviewPokeAddDialog() {
-    PokedexTheme {
-        PokeAddDialog(
-            state = PokePageState().copy(
-                uiState = listOf(
-                    Pokemon(
-                        id = 1,
-                        name = "Bulbasaur",
-                        type = "Planta",
-                        img = "android.resource://com.example.pokedex/drawable/abra.png"
-                    ),
-                    Pokemon(id = 4, name = "Charmander", type = "Fogo", img = ""),
-                    Pokemon(id = 7, name = "Squirtle", type = "Agua", img = "")
-                )
-            ), null
-        )
-    }
-}

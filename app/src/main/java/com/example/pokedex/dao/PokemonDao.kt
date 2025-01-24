@@ -20,9 +20,9 @@ interface PokemonDao {
     @Query("SELECT * FROM pokemon ORDER BY id")
     fun readAllPokemonOrderById(): Flow<List<Pokemon>>
 
-    @Query("SELECT * FROM pokemon ORDER BY type")
+    @Query("SELECT * FROM pokemon ORDER BY type1")
     fun readAllPokemonOrderByFirstType(): Flow<List<Pokemon>>
 
-//    @Query("SELECT * FROM pokemon ORDER BY second_type")
-//    fun readAllPokemonOrderBySecondType(): Flow<List<Pokemon>>
+    @Query("SELECT * FROM pokemon ORDER BY type2")
+    fun readAllPokemonOrderBySecondType(): Flow<List<Pokemon>>
 }

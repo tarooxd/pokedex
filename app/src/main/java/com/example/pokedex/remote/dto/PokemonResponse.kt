@@ -11,7 +11,8 @@ data class PokemonResponse(
     val pastTypes: List<PastType>,
     val abilities: List<AbilityInfo>,
     val types: List<Types>,
-    val sprites: Sprite
+    val sprites: Sprite,
+    val stats: List<Stats>,
 )
 
 data class Sprite(
@@ -62,3 +63,8 @@ data class Ability(
     val url: String
 )
 
+data class Stats(
+    @SerializedName("base_stat")
+    val baseStat: Int,
+    val effort: Int,
+)

@@ -79,24 +79,3 @@ fun PokePage(state: PokePageState, onEvent: ((PokePageEvent) -> Unit)?) {
         }
     }
 }
-
-@Preview(showSystemUi = true)
-@Composable
-fun GreetingPreview() {
-    PokedexTheme {
-        PokePage(
-            state = PokePageState().copy(
-                uiState = listOf(
-                    Pokemon(
-                        id = 1,
-                        name = "Bulbasaur",
-                        type = "Planta",
-                        img = "android.resource://com.example.pokedex/drawable/abra.png"
-                    ),
-                    Pokemon(id = 4, name = "Charmander", type = "Fogo", img = ""),
-                    Pokemon(id = 7, name = "Squirtle", type = "Agua", img = "")
-                )
-            ), null
-        )
-    }
-}
