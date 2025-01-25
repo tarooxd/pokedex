@@ -20,6 +20,7 @@ class MainActivity : ComponentActivity() {
             PokeScreen(
                 state = state, onEvent = pokePageViewModel::onEvent
             )
+//            PokeInfoScreen()
         }
     }
 }

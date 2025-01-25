@@ -25,4 +25,7 @@ interface PokemonDao {
 
     @Query("SELECT * FROM pokemon ORDER BY type2")
     fun readAllPokemonOrderBySecondType(): Flow<List<Pokemon>>
+
+    @Query("SELECT id FROM pokemon ORDER BY id DESC LIMIT 1")
+    fun getLastPokemonID(): Int
 }

@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.pokedex.local.repository.LocalPokemonRepository
-import com.example.pokedex.remote.dto.PokemonResponse
 import com.example.pokedex.remote.repository.RemotePokemonRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -28,7 +27,7 @@ class PokePageViewModel(
 
     private val _uiState = _sortType
         .flatMapLatest { sortType ->
-            when(sortType){
+            when (sortType) {
                 SortType.FIRST_TYPE -> localRepository.getAllPokemonOrderByFirstType()
                 SortType.SECOND_TYPE -> localRepository.getAllPokemonOrderBySecondType()
                 SortType.ID -> localRepository.getAllPokemonOrderById()
@@ -38,44 +37,55 @@ class PokePageViewModel(
 
     private val _state = MutableStateFlow(PokePageState())
 
-    val uiState = combine(_state, _sortType, _uiState){ state, sortType, uiState ->
+    val uiState = combine(_state, _sortType, _uiState) { state, sortType, uiState ->
         state.copy(
             uiState = uiState,
             sortType = sortType
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), PokePageState())
 
-    fun onEvent(event: PokePageEvent){
-        when(event){
-            PokePageEvent.HideDialog -> {
-                _state.update { it.copy(
-                    isAddingPokemon = false
-                ) }
-            }
+    init {
+        viewModelScope.launch(Dispatchers.IO) {
+            onEvent(PokePageEvent.CheckPokemon)
+            onEvent(PokePageEvent.SavePokemon)
+        }
+    }
+
+    fun onEvent(event: PokePageEvent) {
+        when (event) {
 
             PokePageEvent.SavePokemon -> {
-                val id = uiState.value.pokeId
+                var id = _state.value.pokeId
+                if(id == 0) id = 1
                 viewModelScope.launch(Dispatchers.IO) {
-                    remoteRepository.getPokemonFromApi(id)
+                    while (_state.value.isAddingPokemon) {
+                        try {
+                            remoteRepository.getPokemonFromApi(id)
+                            id++
+                        } catch (e: Exception) {
+                            Log.d("Pagina indisponivel", e.message.toString())
+                            _state.update {
+                                it.copy(
+                                    isAddingPokemon = false
+                                )
+                            }
+                        }
+                    }
                 }
-            }
-
-            is PokePageEvent.SetPokeId -> {
-                _state.update {
-                    it.copy(
-                        pokeId = event.id
-                    )
-                }
-            }
-
-            PokePageEvent.ShowDialog -> {
-                _state.update { it.copy(
-                    isAddingPokemon = true
-                ) }
+                Log.d("Aviso", "Todos pokemons já adicionados")
             }
 
             is PokePageEvent.SortPokemon -> {
                 _sortType.value = event.sortType
+            }
+
+            PokePageEvent.CheckPokemon -> {
+                val lastID = localRepository.getLastPokemonID()
+                _state.update {
+                    it.copy(
+                        pokeId = lastID
+                    )
+                }
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.example.pokedex.screen.pokePage
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -37,8 +38,7 @@ fun PokeScreen(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PokePage(state: PokePageState, onEvent: ((PokePageEvent) -> Unit)?) {
-
-    Scaffold(Modifier.safeDrawingPadding(), topBar = {
+    Scaffold(Modifier, topBar = {
         TopAppBar(
             colors = TopAppBarDefaults.topAppBarColors()
                 .copy(MaterialTheme.colorScheme.tertiaryContainer),
@@ -46,10 +46,6 @@ fun PokePage(state: PokePageState, onEvent: ((PokePageEvent) -> Unit)?) {
                 Text(text = "Pokédex", color = MaterialTheme.colorScheme.onTertiaryContainer)
             })
     }) {
-        if (state.isAddingPokemon) {
-            PokeAddDialog(state = state, onEvent)
-        }
-
         Column(
             Modifier.padding(it)
         ) {
@@ -67,15 +63,6 @@ fun PokePage(state: PokePageState, onEvent: ((PokePageEvent) -> Unit)?) {
                         }
                     })
                 })
-            FloatingActionButton(
-                onClick = { onEvent!!(PokePageEvent.ShowDialog) },
-                modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.End)
-
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "floatingAddIcon")
-            }
         }
     }
 }

@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.pokedex"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -62,6 +62,7 @@ dependencies {
     implementation (libs.converter.gson)
     implementation(libs.coil.network.okhttp)
 //    implementation(libs.koin.core)
+    implementation (libs.compose.charts)
     implementation(libs.okhttp)
     implementation(libs.koin.androidx.compose)
     implementation(libs.koin.android)

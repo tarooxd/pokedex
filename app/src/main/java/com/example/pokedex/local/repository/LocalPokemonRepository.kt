@@ -24,6 +24,9 @@ class LocalPokemonRepository(
         return pokemonDao.readAllPokemonOrderBySecondType()
     }
 
+    fun getLastPokemonID(): Int{
+        return pokemonDao.getLastPokemonID()
+    }
 
     suspend fun addPokemon(pokemon: Pokemon) {
         pokemonDao.addPokemon(pokemon)

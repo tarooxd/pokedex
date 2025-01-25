@@ -2,6 +2,7 @@
 agp = "8.8.0"
 androidxRoomRuntime = "2.6.1"
 coilCompose = "3.0.2"
+composeCharts = "0.1.0"
 converterGson = "2.11.0"
 gson = "2.11.0"
 koinAndroid = "4.0.0"
@@ -20,6 +21,7 @@ lifecycleViewmodelKtx = "2.8.7"
 navigationCompose = "2.8.3"
 okhttp = "4.12.0"
 retrofit = "2.11.0"
+ycharts = "2.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -30,6 +32,7 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-ktx = {module = "androidx.room:room-ktx", version.ref = "androidxRoomRuntime"}
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilCompose" }
+compose-charts = { module = "io.github.ehsannarmani:compose-charts", version.ref = "composeCharts" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

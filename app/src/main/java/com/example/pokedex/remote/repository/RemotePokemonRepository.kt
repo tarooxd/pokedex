@@ -10,7 +10,7 @@ class RemotePokemonRepository(
     private val apiService: ApiService,
     private val localPokemonRepository: LocalPokemonRepository
 ) {
-    suspend fun getPokemonFromApi(id: String){
+    suspend fun getPokemonFromApi(id: Int){
         try {
         val pokemon = apiService.getPokemonById(id)
         localPokemonRepository.addPokemon(
@@ -32,7 +32,7 @@ class RemotePokemonRepository(
             )
         )
         }catch (e: Exception){
-            Log.d("Pokemon $id não achado", e.message.toString())
+            throw e
         }
     }
 }

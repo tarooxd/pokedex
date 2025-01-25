@@ -4,7 +4,7 @@ import com.example.pokedex.entity.Pokemon
 
 data class PokePageState (
     val uiState: List<Pokemon> = emptyList(),
-    val pokeId: String = "",
-    val isAddingPokemon: Boolean = false,
+    val pokeId: Int = 1,
+    val isAddingPokemon: Boolean = true,
     val sortType: SortType = SortType.ID
 )
